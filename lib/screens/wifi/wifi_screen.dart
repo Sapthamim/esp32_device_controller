@@ -58,9 +58,7 @@ class _WifiScreenState extends State<WifiScreen> {
     super.dispose();
   }
 
-  // ============================================================
   // WIFI STATUS CHANGED
-  // ============================================================
 
   void _handleWifiStatusChanged() {
     if (!mounted) {
@@ -73,9 +71,7 @@ class _WifiScreenState extends State<WifiScreen> {
 
     final currentStatus = _wifiProvider.status;
 
-    // ==========================================================
     // WIFI CONNECTED
-    // ==========================================================
 
     if (currentStatus == WifiConnectionStatus.connected) {
       _waitingForWifiResult = false;
@@ -87,9 +83,7 @@ class _WifiScreenState extends State<WifiScreen> {
       return;
     }
 
-    // ==========================================================
     // WIFI FAILED
-    // ==========================================================
 
     if (currentStatus == WifiConnectionStatus.failed) {
       _waitingForWifiResult = false;
@@ -102,9 +96,7 @@ class _WifiScreenState extends State<WifiScreen> {
     }
   }
 
-  // ============================================================
   // SUCCESS SNACKBAR
-  // ============================================================
 
   void _showSuccessSnackBar(String message) {
     if (!mounted) return;
@@ -130,9 +122,7 @@ class _WifiScreenState extends State<WifiScreen> {
     );
   }
 
-  // ============================================================
   // ERROR SNACKBAR
-  // ============================================================
 
   void _showErrorSnackBar(String message) {
     if (!mounted) return;
@@ -158,9 +148,7 @@ class _WifiScreenState extends State<WifiScreen> {
     );
   }
 
-  // ============================================================
   // SELECT WIFI NETWORK
-  // ============================================================
 
   Future<void> _connectToWifi(WifiNetwork network) async {
     final deviceProvider = context.read<DeviceProvider>();
@@ -176,9 +164,7 @@ class _WifiScreenState extends State<WifiScreen> {
     await _showPasswordDialog(network);
   }
 
-  // ============================================================
   // PASSWORD DIALOG
-  // ============================================================
 
   Future<void> _showPasswordDialog(WifiNetwork network) async {
     final password = await showDialog<String>(
@@ -250,9 +236,7 @@ class _WifiScreenState extends State<WifiScreen> {
     await _startWifiConnection(network.ssid, password);
   }
 
-  // ============================================================
   // START WIFI CONNECTION
-  // ============================================================
 
   Future<void> _startWifiConnection(String ssid, String password) async {
     final wifiProvider = context.read<WifiProvider>();
@@ -267,9 +251,7 @@ class _WifiScreenState extends State<WifiScreen> {
       return;
     }
 
-    // ==========================================================
     // WAITING FOR ESP32
-    // ==========================================================
 
     if (wifiProvider.status == WifiConnectionStatus.waiting) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -294,9 +276,7 @@ class _WifiScreenState extends State<WifiScreen> {
       return;
     }
 
-    // ==========================================================
     // QUICK SUCCESS
-    // ==========================================================
 
     if (wifiProvider.status == WifiConnectionStatus.connected) {
       _waitingForWifiResult = false;
@@ -308,9 +288,7 @@ class _WifiScreenState extends State<WifiScreen> {
       return;
     }
 
-    // ==========================================================
     // FAILED
-    // ==========================================================
 
     if (wifiProvider.status == WifiConnectionStatus.failed) {
       _waitingForWifiResult = false;
@@ -323,17 +301,13 @@ class _WifiScreenState extends State<WifiScreen> {
     }
   }
 
-  // ============================================================
   // SCAN WIFI NETWORKS
-  // ============================================================
 
   Future<void> _scanNetworks() async {
     await context.read<WifiProvider>().scanNetworks();
   }
 
-  // ============================================================
   // BUILD
-  // ============================================================
 
   @override
   Widget build(BuildContext context) {
@@ -360,48 +334,36 @@ class _WifiScreenState extends State<WifiScreen> {
 
       body: Consumer<WifiProvider>(
         builder: (context, wifiProvider, child) {
-          // ====================================================
           // SCANNING
-          // ====================================================
 
           if (wifiProvider.isScanning) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // ====================================================
           // ERROR
-          // ====================================================
 
           if (wifiProvider.errorMessage != null &&
               wifiProvider.networks.isEmpty) {
             return _buildErrorView(wifiProvider.errorMessage!);
           }
 
-          // ====================================================
           // EMPTY
-          // ====================================================
 
           if (wifiProvider.networks.isEmpty) {
             return _buildEmptyView();
           }
 
-          // ====================================================
           // NETWORK LIST
-          // ====================================================
 
           return ListView(
             padding: const EdgeInsets.all(16),
 
             children: [
-              // ==================================================
               // CONNECTED CARD
-              // ==================================================
               if (wifiProvider.isConnected)
                 _buildConnectedCard(wifiProvider.connectedSsid ?? ''),
 
-              // ==================================================
               // CONNECTING CARD
-              // ==================================================
               if (wifiProvider.isConnecting)
                 _buildConnectingCard(wifiProvider.selectedSsid ?? ''),
 
@@ -424,13 +386,9 @@ class _WifiScreenState extends State<WifiScreen> {
     );
   }
 
-  // ============================================================
   // WIFI NETWORK CARD
-  // ============================================================
 
   Widget _buildWifiNetworkCard(WifiNetwork network, WifiProvider wifiProvider) {
-    final isConnected = wifiProvider.connectedSsid == network.ssid;
-
     final isSelected = wifiProvider.selectedSsid == network.ssid;
 
     return Card(
@@ -458,10 +416,6 @@ class _WifiScreenState extends State<WifiScreen> {
         //
         // Arrow is removed.
         // Only connected Wi-Fi shows green check.
-        trailing: isConnected
-            ? const Icon(Icons.check_circle, color: Colors.green)
-            : null,
-
         onTap: () {
           if (wifiProvider.isConnecting) {
             return;
@@ -475,9 +429,7 @@ class _WifiScreenState extends State<WifiScreen> {
     );
   }
 
-  // ============================================================
   // CONNECTED CARD
-  // ============================================================
 
   Widget _buildConnectedCard(String ssid) {
     return Container(
@@ -519,16 +471,11 @@ class _WifiScreenState extends State<WifiScreen> {
               ],
             ),
           ),
-
-          const Icon(Icons.check_circle, color: Colors.green),
         ],
       ),
     );
   }
-
-  // ============================================================
   // CONNECTING CARD
-  // ============================================================
 
   Widget _buildConnectingCard(String ssid) {
     return Container(
@@ -580,9 +527,7 @@ class _WifiScreenState extends State<WifiScreen> {
     );
   }
 
-  // ============================================================
   // ERROR VIEW
-  // ============================================================
 
   Widget _buildErrorView(String message) {
     return Center(
@@ -623,9 +568,7 @@ class _WifiScreenState extends State<WifiScreen> {
     );
   }
 
-  // ============================================================
   // EMPTY VIEW
-  // ============================================================
 
   Widget _buildEmptyView() {
     return Center(

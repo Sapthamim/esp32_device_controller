@@ -404,9 +404,7 @@ class BleService {
     );
   }
 
-  // --------------------------------------------------
   // DISABLE SENSOR / DATA NOTIFICATIONS
-  // --------------------------------------------------
 
   Future<void> disableSensorNotifications() async {
     final characteristic = _sensorCharacteristic;
@@ -436,9 +434,7 @@ class BleService {
     }
   }
 
-  // --------------------------------------------------
   // READ SENSOR DATA
-  // --------------------------------------------------
 
   Future<List<int>> readSensorData() async {
     final characteristic = _sensorCharacteristic;
@@ -464,9 +460,7 @@ class BleService {
     return data;
   }
 
-  // ==================================================
   // WIFI CHARACTERISTIC
-  // ==================================================
 
   BluetoothCharacteristic? get wifiCharacteristic {
     return _wifiCharacteristic;
@@ -487,9 +481,8 @@ class BleService {
         characteristic.properties.writeWithoutResponse;
   }
 
-  // --------------------------------------------------
   // SEND WIFI CREDENTIALS
-  // --------------------------------------------------
+
   //
   // ESP32 expects:
   //
@@ -500,7 +493,6 @@ class BleService {
   // IOT|MyPassword123
   //
   // NOT JSON.
-  // --------------------------------------------------
 
   Future<void> sendWifiCredentials({
     required String ssid,
@@ -527,13 +519,11 @@ class BleService {
       throw Exception('Wi-Fi SSID cannot be empty.');
     }
 
-    // --------------------------------------------------
     // IMPORTANT
-    //
+
     // ESP32 firmware expects:
-    //
+
     // SSID|PASSWORD
-    // --------------------------------------------------
 
     final credentials = '$ssid|$password';
 
@@ -556,12 +546,10 @@ class BleService {
     debugPrint('------------------------------------');
 
     try {
-      // --------------------------------------------------
       // WRITE WITH RESPONSE
-      // --------------------------------------------------
+
       //
       // ESP32 WIFI_UUID supports PROPERTY_WRITE.
-      // --------------------------------------------------
 
       if (characteristic.properties.write) {
         try {
@@ -584,22 +572,20 @@ class BleService {
             '$error',
           );
 
-          // ------------------------------------------------
           // IMPORTANT
-          //
+
           // ESP32 performs WiFi.begin() directly
           // inside onWrite().
-          //
+
           // Android can therefore sometimes wait for
           // the GATT write response while ESP32 is
           // busy connecting to Wi-Fi.
-          //
+
           // If this is a timeout, do NOT immediately
           // report Wi-Fi failure.
-          //
+
           // The real result will arrive through
           // DATA_UUID.
-          // ------------------------------------------------
 
           if (_isBleTimeout(error)) {
             debugPrint(
@@ -615,10 +601,8 @@ class BleService {
             return;
           }
 
-          // ------------------------------------------------
           // FALLBACK:
           // WRITE WITHOUT RESPONSE
-          // ------------------------------------------------
 
           if (characteristic.properties.writeWithoutResponse) {
             try {
@@ -647,9 +631,7 @@ class BleService {
         }
       }
 
-      // --------------------------------------------------
       // WRITE WITHOUT RESPONSE
-      // --------------------------------------------------
 
       if (characteristic.properties.writeWithoutResponse) {
         await characteristic.write(
@@ -673,9 +655,7 @@ class BleService {
     }
   }
 
-  // --------------------------------------------------
   // CHECK BLE TIMEOUT
-  // --------------------------------------------------
 
   bool _isBleTimeout(String error) {
     final value = error.toLowerCase();

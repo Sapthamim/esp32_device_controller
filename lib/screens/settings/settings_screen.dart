@@ -12,9 +12,7 @@ import '../../states/sensor_provider.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  // ============================================================
   // EXPORT SENSOR DATA
-  // ============================================================
 
   Future<void> _exportData(BuildContext context) async {
     // Get the service before the first await.
@@ -66,9 +64,7 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  // ============================================================
   // FORMAT DATE
-  // ============================================================
 
   String _formatDate(DateTime date) {
     final year = date.year.toString();
@@ -80,17 +76,13 @@ class SettingsScreen extends StatelessWidget {
     return '$year-$month-$day';
   }
 
-  // ============================================================
   // CONNECT BLUETOOTH
-  // ============================================================
 
   void _connectDevice(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.bleScan);
   }
 
-  // ============================================================
   // DISCONNECT BLUETOOTH
-  // ============================================================
 
   Future<void> _disconnectDevice(BuildContext context) async {
     final deviceProvider = context.read<DeviceProvider>();
@@ -130,25 +122,19 @@ class SettingsScreen extends StatelessWidget {
 
     final sensorProvider = context.read<SensorProvider>();
 
-    // ==========================================================
     // STEP 1: STOP SENSOR MONITORING
-    // ==========================================================
 
     await sensorProvider.stopListening();
 
     if (!context.mounted) return;
 
-    // ==========================================================
     // STEP 2: DISCONNECT BLUETOOTH
-    // ==========================================================
 
     await deviceProvider.disconnect();
 
     if (!context.mounted) return;
 
-    // ==========================================================
     // STEP 3: CHECK DISCONNECTION RESULT
-    // ==========================================================
 
     if (deviceProvider.status == DeviceConnectionStatus.disconnected) {
       _showSuccessSnackBar(context, 'Bluetooth disconnected.');
@@ -158,9 +144,7 @@ class SettingsScreen extends StatelessWidget {
 
       if (!context.mounted) return;
 
-      // ========================================================
       // STEP 4: GO TO BLUETOOTH SCANNING SCREEN
-      // ========================================================
 
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -175,9 +159,7 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  // ============================================================
   // ABOUT DIALOG
-  // ============================================================
 
   void _showAboutDialog(BuildContext context) {
     showDialog<void>(
@@ -216,9 +198,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
   // SUCCESS SNACKBAR
-  // ============================================================
 
   void _showSuccessSnackBar(BuildContext context, String message) {
     if (!context.mounted) return;
@@ -244,9 +224,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
   // ERROR SNACKBAR
-  // ============================================================
 
   void _showErrorSnackBar(BuildContext context, String message) {
     if (!context.mounted) return;
@@ -272,9 +250,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
   // BLUETOOTH BUTTON
-  // ============================================================
 
   Widget _buildBluetoothButton(
     BuildContext context,
@@ -324,9 +300,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
   // BUILD
-  // ============================================================
 
   @override
   Widget build(BuildContext context) {
@@ -343,16 +317,12 @@ class SettingsScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // ==================================================
             // SETTINGS CONTENT
-            // ==================================================
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // ==================================================
                   // DATA
-                  // ==================================================
                   const Text(
                     'Export Data',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -372,9 +342,7 @@ class SettingsScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // ==================================================
                   // ABOUT
-                  // ==================================================
                   const Text(
                     'About',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -395,9 +363,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
 
-            // ==================================================
             // CONNECT / DISCONNECT BUTTON
-            // ==================================================
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
               child: _buildBluetoothButton(context, deviceProvider),

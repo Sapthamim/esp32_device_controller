@@ -51,41 +51,13 @@ class _BleScanScreenState extends State<BleScanScreen> {
 
     if (!mounted) return;
 
-    // --------------------------------------------------
-    // OLD CONNECTING SNACKBAR
-    // --------------------------------------------------
-    /*
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Connecting to $deviceName...',
-          style: const TextStyle(
-            color: Color(0xFF2563EB),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        duration: const Duration(seconds: 15),
-      ),
-    );
-    */
-
-    // --------------------------------------------------
     // CONNECT TO ESP32
-    // --------------------------------------------------
 
     await deviceProvider.connect(device, rssi: rssi);
 
     if (!mounted) return;
 
-    // --------------------------------------------------
     // CONNECTION FAILED
-    // --------------------------------------------------
 
     if (!deviceProvider.isConnected) {
       setState(() {
@@ -104,9 +76,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
       return;
     }
 
-    // --------------------------------------------------
     // CONNECTION SUCCESSFUL
-    // --------------------------------------------------
 
     // Hide old connecting SnackBar if it is enabled later.
     // ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -134,9 +104,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              // --------------------------------------------------
               // BLUETOOTH ICON
-              // --------------------------------------------------
               Container(
                 width: 110,
                 height: 110,
@@ -153,9 +121,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
 
               const SizedBox(height: 25),
 
-              // --------------------------------------------------
               // TITLE
-              // --------------------------------------------------
               Text(
                 bleProvider.isScanning
                     ? 'Scanning for BLE Devices...'
@@ -168,9 +134,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
 
               const SizedBox(height: 10),
 
-              // --------------------------------------------------
               // DESCRIPTION
-              // --------------------------------------------------
               Text(
                 bleProvider.isScanning
                     ? 'Please wait while we search for nearby devices.'
@@ -181,16 +145,12 @@ class _BleScanScreenState extends State<BleScanScreen> {
 
               const SizedBox(height: 25),
 
-              // --------------------------------------------------
               // SCANNING PROGRESS
-              // --------------------------------------------------
               if (bleProvider.isScanning) const LinearProgressIndicator(),
 
               const SizedBox(height: 20),
 
-              // --------------------------------------------------
               // CONNECTING STATUS BOX
-              // --------------------------------------------------
               if (_isConnecting && _connectingDeviceName != null) ...[
                 Container(
                   width: double.infinity,
@@ -231,9 +191,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
                 const SizedBox(height: 15),
               ],
 
-              // --------------------------------------------------
               // AVAILABLE DEVICES
-              // --------------------------------------------------
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -247,9 +205,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
 
               const SizedBox(height: 12),
 
-              // --------------------------------------------------
               // DEVICE LIST
-              // --------------------------------------------------
               Expanded(
                 child: bleProvider.scanResults.isEmpty
                     ? _buildEmptyState(bleProvider.isScanning)
@@ -266,9 +222,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
 
               const SizedBox(height: 12),
 
-              // --------------------------------------------------
               // SCAN BUTTON
-              // --------------------------------------------------
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -298,9 +252,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
     );
   }
 
-  // --------------------------------------------------
   // EMPTY STATE
-  // --------------------------------------------------
 
   Widget _buildEmptyState(bool isScanning) {
     return Center(
@@ -328,17 +280,11 @@ class _BleScanScreenState extends State<BleScanScreen> {
     );
   }
 
-  // --------------------------------------------------
   // DEVICE CARD
-  // --------------------------------------------------
 
   Widget _buildDeviceCard(ScanResult result) {
     final device = result.device;
     final deviceName = BleUtils.getDeviceName(device);
-
-    final deviceId = BleUtils.getDeviceId(device);
-    final signal = BleUtils.formatSignalStrength(result.rssi);
-
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 0,

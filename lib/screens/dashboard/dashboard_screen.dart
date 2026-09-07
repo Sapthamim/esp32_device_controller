@@ -23,6 +23,8 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         title: const Text(
           'Dashboard',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -88,7 +90,6 @@ class DashboardScreen extends StatelessWidget {
               ),
 
               // SENSOR ERROR
-              // ======================================================
               if (sensorProvider.errorMessage != null) ...[
                 const SizedBox(height: 14),
                 _buildErrorCard(sensorProvider.errorMessage!),
@@ -100,9 +101,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
   // DEVICE CONNECTION CARD
-  // ============================================================
 
   Widget _buildDeviceConnectionCard(
     BuildContext context,
@@ -174,18 +173,6 @@ class DashboardScreen extends StatelessWidget {
           ),
 
           // CONNECTION STATUS ICON
-          Icon(
-            connected
-                ? Icons.check_circle
-                : connecting
-                ? Icons.sync
-                : Icons.cancel,
-            color: connected
-                ? Colors.green
-                : connecting
-                ? Colors.orange
-                : Colors.grey,
-          ),
         ],
       ),
     );
@@ -247,12 +234,6 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          // WI-FI STATUS
-          Icon(
-            connected ? Icons.check_circle : Icons.cancel,
-            color: connected ? Colors.green : Colors.grey,
           ),
         ],
       ),
@@ -343,7 +324,7 @@ class DashboardScreen extends StatelessWidget {
                 child: const Icon(
                   Icons.water_drop,
                   color: Color(0xFF2563EB),
-                  size: 27,
+                  size: 29,
                 ),
               ),
 

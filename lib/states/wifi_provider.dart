@@ -187,28 +187,27 @@ class WifiProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ============================================================
   // WIFI CONNECTION FAILED
-  // ============================================================
 
   void _handleWifiFailed() {
-    // Ignore duplicate failure messages.
-
+    // Ignore duplicate failure messages
     if (_status == WifiConnectionStatus.failed) {
       debugPrint('WifiProvider: Wi-Fi failure already handled.');
-
       return;
     }
 
-    _connectedSsid = null;
+    // Clear the selected Wi-Fi network
+    // so it returns to its normal color.
+    _selectedSsid = null;
 
+    _connectedSsid = null;
     _pendingSsid = null;
 
     _status = WifiConnectionStatus.failed;
 
     _errorMessage = 'Incorrect Wi-Fi password or connection failed.';
 
-    debugPrint('WifiProvider: ESP32 WI-FI CONNECTION FAILED');
+    debugPrint('WifiProvider: Wi-Fi connection failed.');
 
     notifyListeners();
   }
@@ -222,7 +221,6 @@ class WifiProvider extends ChangeNotifier {
       return;
     }
 
-    // IMPORTANT:
     // Clear previous scan results immediately.
     //
     // This means old networks will not remain visible
