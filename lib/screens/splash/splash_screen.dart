@@ -13,15 +13,23 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? _redirectTimer;
+
   @override
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 2), () {
+    _redirectTimer = Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
       //replaces the Splash Screen with the Welcome Screen
       Navigator.pushReplacementNamed(context, AppRoutes.welcome);
     });
+  }
+
+  @override
+  void dispose() {
+    _redirectTimer?.cancel();
+    super.dispose();
   }
 
   @override

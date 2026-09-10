@@ -319,7 +319,7 @@ class DeviceProvider extends ChangeNotifier {
 
       _status = DeviceConnectionStatus.error;
 
-      _errorMessage = 'Connection failed: $e';
+      _errorMessage = 'Connection failed';
 
       _device = null;
       _rssi = null;

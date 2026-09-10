@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../app/routes.dart';
+import '../../core/utils/snackbar_utils.dart';
 import '../../services/storage_service.dart';
 import '../../states/device_provider.dart';
 import '../../states/sensor_provider.dart';
@@ -25,7 +26,7 @@ class SettingsScreen extends StatelessWidget {
       if (!context.mounted) return;
 
       if (readings.isEmpty) {
-        _showErrorSnackBar(context, 'No sensor data available to export.');
+        SnackbarUtils.showError(context, 'No sensor data available to export.');
         return;
       }
 
@@ -54,13 +55,13 @@ class SettingsScreen extends StatelessWidget {
       // Check again after the second await.
       if (!context.mounted) return;
 
-      _showSuccessSnackBar(context, 'Sensor data exported to Downloads.');
+      SnackbarUtils.showSuccess(context, 'Sensor data exported to Downloads.');
     } catch (e) {
       debugPrint('Export error: $e');
 
       if (!context.mounted) return;
 
-      _showErrorSnackBar(context, 'Unable to export sensor data.');
+      SnackbarUtils.showError(context, 'Unable to export sensor data.');
     }
   }
 
@@ -79,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
   // CONNECT BLUETOOTH
 
   void _connectDevice(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.bleScan);
+    AppRoutes.clearAndNavigateToBleScan(context);
   }
 
   // DISCONNECT BLUETOOTH
@@ -114,6 +115,7 @@ class SettingsScreen extends StatelessWidget {
         );
       },
     );
+
     if (shouldDisconnect != true) {
       return;
     }
@@ -137,7 +139,7 @@ class SettingsScreen extends StatelessWidget {
     // STEP 3: CHECK DISCONNECTION RESULT
 
     if (deviceProvider.status == DeviceConnectionStatus.disconnected) {
-      _showSuccessSnackBar(context, 'Bluetooth disconnected.');
+      SnackbarUtils.showSuccess(context, 'Bluetooth disconnected.');
 
       // Give the SnackBar a short moment to appear.
       await Future.delayed(const Duration(milliseconds: 300));
@@ -152,7 +154,7 @@ class SettingsScreen extends StatelessWidget {
         (route) => false,
       );
     } else {
-      _showErrorSnackBar(
+      SnackbarUtils.showError(
         context,
         deviceProvider.errorMessage ?? 'Unable to disconnect Bluetooth.',
       );
@@ -195,58 +197,6 @@ class SettingsScreen extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-
-  // SUCCESS SNACKBAR
-
-  void _showSuccessSnackBar(BuildContext context, String message) {
-    if (!context.mounted) return;
-
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  // ERROR SNACKBAR
-
-  void _showErrorSnackBar(BuildContext context, String message) {
-    if (!context.mounted) return;
-
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        duration: const Duration(seconds: 3),
-      ),
     );
   }
 
@@ -313,7 +263,6 @@ class SettingsScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-
       body: SafeArea(
         child: Column(
           children: [
@@ -325,7 +274,10 @@ class SettingsScreen extends StatelessWidget {
                   // DATA
                   const Text(
                     'Export Data',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(height: 8),
@@ -345,7 +297,10 @@ class SettingsScreen extends StatelessWidget {
                   // ABOUT
                   const Text(
                     'About',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(height: 8),
@@ -363,7 +318,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
 
-            // CONNECT / DISCONNECT BUTTON
+            // DISCONNECT BUTTON
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
               child: _buildBluetoothButton(context, deviceProvider),

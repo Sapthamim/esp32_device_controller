@@ -24,6 +24,22 @@ class AppRoutes {
 
   static const String settings = '/settings';
 
+  static void clearAndNavigateToBleScan(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.bleScan,
+      (route) => false,
+    );
+  }
+
+  static void clearAndNavigateToHome(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.home,
+      (route) => false,
+    );
+  }
+
   // ROUTE GENERATOR: which screen to create based on the route name.
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
     // Checks which screen was requested.

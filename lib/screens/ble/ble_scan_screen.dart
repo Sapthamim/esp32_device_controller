@@ -38,12 +38,12 @@ class _BleScanScreenState extends State<BleScanScreen> {
     final deviceProvider = context.read<DeviceProvider>();
     final sensorProvider = context.read<SensorProvider>();
 
-    final device = result.device;
-    final deviceName = BleUtils.getDeviceName(device);
-    final rssi = result.rssi;
+    // final device = result.device;
+    // final deviceName = BleUtils.getDeviceName(device);
+    // final rssi = result.rssi;
 
     setState(() {
-      _connectingDeviceName = deviceName;
+      // _connectingDeviceName = deviceName;
       _isConnecting = true;
     });
 
@@ -53,7 +53,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
 
     // CONNECT TO ESP32
 
-    await deviceProvider.connect(device, rssi: rssi);
+    await deviceProvider.connect(result.device, rssi: result.rssi);
 
     if (!mounted) return;
 
@@ -90,7 +90,7 @@ class _BleScanScreenState extends State<BleScanScreen> {
       _isConnecting = false;
     });
 
-    Navigator.pushReplacementNamed(context, AppRoutes.home);
+    AppRoutes.clearAndNavigateToHome(context);
   }
 
   @override

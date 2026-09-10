@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
 
+import '../../app/app.dart';
 import '../../app/routes.dart';
 import '../../core/utils/ble_utils.dart';
 import '../../states/device_provider.dart';
@@ -19,7 +20,8 @@ class DeviceInfoScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     if (deviceProvider.isConnected) {
-      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+      await ESP32ControllerApp.saveLastHomeTabIndex(0);
+      AppRoutes.clearAndNavigateToHome(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

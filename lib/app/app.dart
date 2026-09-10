@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/theme/app_theme.dart';
 import '../services/ble_service.dart';
@@ -12,6 +13,18 @@ import 'routes.dart';
 
 class ESP32ControllerApp extends StatelessWidget {
   const ESP32ControllerApp({super.key});
+
+  static const String _homeTabKey = 'last_home_tab_index';
+
+  static Future<int> getLastHomeTabIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_homeTabKey) ?? 0;
+  }
+
+  static Future<void> saveLastHomeTabIndex(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_homeTabKey, index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +78,9 @@ class ESP32ControllerApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'ESP32 Controller',
         theme: AppTheme.lightTheme,
-        initialRoute: AppRoutes.splash,
+        // initialRoute: AppRoutes.splash,
         onGenerateRoute: AppRoutes.generateRoute,
+        // home: SplashScreen(),
       ),
     );
   }

@@ -587,45 +587,45 @@ class BleService {
           // The real result will arrive through
           // DATA_UUID.
 
-          if (_isBleTimeout(error)) {
-            debugPrint(
-              'BLE write timed out while ESP32 '
-              'may still be processing the request.',
-            );
+          // if (_isBleTimeout(error)) {
+          //   debugPrint(
+          //     'BLE write timed out while ESP32 '
+          //     'may still be processing the request.',
+          //   );
 
-            debugPrint(
-              'Waiting for ESP32 Wi-Fi result '
-              'through DATA_UUID.',
-            );
+          //   debugPrint(
+          //     'Waiting for ESP32 Wi-Fi result '
+          //     'through DATA_UUID.',
+          //   );
 
-            return;
-          }
+          //   return;
+          //  }
 
           // FALLBACK:
           // WRITE WITHOUT RESPONSE
 
-          if (characteristic.properties.writeWithoutResponse) {
-            try {
-              await characteristic.write(
-                utf8.encode(credentials),
-                withoutResponse: true,
-              );
+          // if (characteristic.properties.writeWithoutResponse) {
+          //   try {
+          //     await characteristic.write(
+          //       utf8.encode(credentials),
+          //       withoutResponse: true,
+          //     );
 
-              debugPrint(
-                'Wi-Fi credentials sent using '
-                'writeWithoutResponse.',
-              );
+          //     debugPrint(
+          //       'Wi-Fi credentials sent using '
+          //       'writeWithoutResponse.',
+          //     );
 
-              return;
-            } catch (fallbackError) {
-              debugPrint(
-                'Fallback Wi-Fi write failed: '
-                '$fallbackError',
-              );
+          //     return;
+          //   } catch (fallbackError) {
+          //     debugPrint(
+          //       'Fallback Wi-Fi write failed: '
+          //       '$fallbackError',
+          //     );
 
-              rethrow;
-            }
-          }
+          //     rethrow;
+          //   }
+          // }
 
           rethrow;
         }
@@ -657,13 +657,13 @@ class BleService {
 
   // CHECK BLE TIMEOUT
 
-  bool _isBleTimeout(String error) {
-    final value = error.toLowerCase();
+  // bool _isBleTimeout(String error) {
+  //   final value = error.toLowerCase();
 
-    return value.contains('timed out') ||
-        value.contains('timeout') ||
-        value.contains('timed out after');
-  }
+  //   return value.contains('timed out') ||
+  //       value.contains('timeout') ||
+  //       value.contains('timed out after');
+  // }
 
   Future<void> enableWifiNotifications() async {
     debugPrint('Wi-Fi status uses DATA_UUID.');
@@ -679,13 +679,13 @@ class BleService {
     return null;
   }
 
-  Future<void> sendCommand(String command) async {
-    debugPrint(
-      'Control command ignored because the '
-      'current ESP32 firmware does not have '
-      'a control characteristic: $command',
-    );
-  }
+  // Future<void> sendCommand(String command) async {
+  //   debugPrint(
+  //     'Control command ignored because the '
+  //     'current ESP32 firmware does not have '
+  //     'a control characteristic: $command',
+  //   );
+  // }
 
   // DISPOSE
 

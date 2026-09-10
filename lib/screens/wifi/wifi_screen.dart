@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 import '../../models/wifi_network.dart';
 import '../../states/device_provider.dart';
 import '../../states/wifi_provider.dart';
@@ -78,7 +79,7 @@ class _WifiScreenState extends State<WifiScreen> {
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      _showSuccessSnackBar('Wi-Fi connected successfully.');
+      SnackbarUtils.showSuccess(context, 'Wi-Fi connected successfully.');
 
       return;
     }
@@ -90,62 +91,11 @@ class _WifiScreenState extends State<WifiScreen> {
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      _showErrorSnackBar(
+      SnackbarUtils.showError(
+        context,
         _wifiProvider.errorMessage ?? 'Wi-Fi connection failed.',
       );
     }
-  }
-
-  // SUCCESS SNACKBAR
-
-  void _showSuccessSnackBar(String message) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  // ERROR SNACKBAR
-
-  void _showErrorSnackBar(String message) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        duration: const Duration(seconds: 3),
-      ),
-    );
   }
 
   // SELECT WIFI NETWORK
@@ -154,7 +104,7 @@ class _WifiScreenState extends State<WifiScreen> {
     final deviceProvider = context.read<DeviceProvider>();
 
     if (!deviceProvider.isConnected) {
-      _showErrorSnackBar('Connect the ESP32 through BLE first.');
+      SnackbarUtils.showError(context, 'Connect the ESP32 through BLE first.');
 
       return;
     }
@@ -177,22 +127,18 @@ class _WifiScreenState extends State<WifiScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               title: Text('Connect to ${network.ssid}'),
-
               content: TextField(
                 controller: _passwordController,
                 obscureText: obscurePassword,
                 autofocus: true,
-
                 decoration: InputDecoration(
                   labelText: 'Wi-Fi Password',
                   hintText: 'Enter password',
                   border: const OutlineInputBorder(),
-
                   suffixIcon: IconButton(
                     icon: Icon(
                       obscurePassword ? Icons.visibility_off : Icons.visibility,
                     ),
-
                     onPressed: () {
                       setDialogState(() {
                         obscurePassword = !obscurePassword;
@@ -201,7 +147,6 @@ class _WifiScreenState extends State<WifiScreen> {
                   ),
                 ),
               ),
-
               actions: [
                 TextButton(
                   onPressed: () {
@@ -209,7 +154,6 @@ class _WifiScreenState extends State<WifiScreen> {
                   },
                   child: const Text('Cancel'),
                 ),
-
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(dialogContext).pop(_passwordController.text);
@@ -228,7 +172,7 @@ class _WifiScreenState extends State<WifiScreen> {
     }
 
     if (password.isEmpty) {
-      _showErrorSnackBar('Please enter the Wi-Fi password.');
+      SnackbarUtils.showError(context, 'Please enter the Wi-Fi password.');
 
       return;
     }
@@ -256,6 +200,11 @@ class _WifiScreenState extends State<WifiScreen> {
     if (wifiProvider.status == WifiConnectionStatus.waiting) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
+      // The shared SnackbarUtils currently exposes the
+      // success/error helpers used by the rest of the app.
+      //
+      // Keep this waiting state as a normal informational
+      // SnackBar because it is neither success nor error.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
@@ -283,7 +232,7 @@ class _WifiScreenState extends State<WifiScreen> {
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      _showSuccessSnackBar('Wi-Fi connected successfully.');
+      SnackbarUtils.showSuccess(context, 'Wi-Fi connected successfully.');
 
       return;
     }
@@ -295,7 +244,8 @@ class _WifiScreenState extends State<WifiScreen> {
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      _showErrorSnackBar(
+      SnackbarUtils.showError(
+        context,
         wifiProvider.errorMessage ?? 'Wi-Fi connection failed.',
       );
     }
@@ -313,17 +263,16 @@ class _WifiScreenState extends State<WifiScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         title: const Text(
           'Wi-Fi Networks',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-
         actions: [
           TextButton.icon(
             onPressed: _scanNetworks,
-
             icon: const Icon(Icons.wifi_find),
-
             label: const Text(
               'SCAN',
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -331,33 +280,26 @@ class _WifiScreenState extends State<WifiScreen> {
           ),
         ],
       ),
-
       body: Consumer<WifiProvider>(
         builder: (context, wifiProvider, child) {
           // SCANNING
-
           if (wifiProvider.isScanning) {
             return const Center(child: CircularProgressIndicator());
           }
 
           // ERROR
-
-          if (wifiProvider.errorMessage != null &&
-              wifiProvider.networks.isEmpty) {
+          if (wifiProvider.errorMessage != null && wifiProvider.networks.isEmpty) {
             return _buildErrorView(wifiProvider.errorMessage!);
           }
 
           // EMPTY
-
           if (wifiProvider.networks.isEmpty) {
             return _buildEmptyView();
           }
 
           // NETWORK LIST
-
           return ListView(
             padding: const EdgeInsets.all(16),
-
             children: [
               // CONNECTED CARD
               if (wifiProvider.isConnected)
@@ -393,15 +335,12 @@ class _WifiScreenState extends State<WifiScreen> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-
       elevation: 1,
-
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 
-        // LEFT WIFI ICON — KEPT
+        // LEFT WIFI ICON
         leading: Icon(network.secured ? Icons.wifi_lock : Icons.wifi, size: 30),
 
         title: Text(
@@ -409,13 +348,6 @@ class _WifiScreenState extends State<WifiScreen> {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
 
-        // Signal strength text removed
-        // as it was already removed in your code.
-
-        // RIGHT ICON
-        //
-        // Arrow is removed.
-        // Only connected Wi-Fi shows green check.
         onTap: () {
           if (wifiProvider.isConnecting) {
             return;
@@ -434,17 +366,12 @@ class _WifiScreenState extends State<WifiScreen> {
   Widget _buildConnectedCard(String ssid) {
     return Container(
       width: double.infinity,
-
       padding: const EdgeInsets.all(16),
-
       decoration: BoxDecoration(
         color: Colors.green.withValues(alpha: 0.10),
-
         borderRadius: BorderRadius.circular(16),
-
         border: Border.all(color: Colors.green.withValues(alpha: 0.30)),
       ),
-
       child: Row(
         children: [
           const Icon(Icons.wifi, color: Colors.green, size: 30),
@@ -454,7 +381,6 @@ class _WifiScreenState extends State<WifiScreen> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-
               children: [
                 const Text(
                   'Wi-Fi Connected',
@@ -475,28 +401,23 @@ class _WifiScreenState extends State<WifiScreen> {
       ),
     );
   }
+
   // CONNECTING CARD
 
   Widget _buildConnectingCard(String ssid) {
     return Container(
       width: double.infinity,
-
       padding: const EdgeInsets.all(16),
-
       decoration: BoxDecoration(
         color: Colors.blue.withValues(alpha: 0.10),
-
         borderRadius: BorderRadius.circular(16),
-
         border: Border.all(color: Colors.blue.withValues(alpha: 0.30)),
       ),
-
       child: Row(
         children: [
           const SizedBox(
             width: 22,
             height: 22,
-
             child: CircularProgressIndicator(strokeWidth: 2),
           ),
 
@@ -505,7 +426,6 @@ class _WifiScreenState extends State<WifiScreen> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-
               children: [
                 const Text(
                   'Connecting to Wi-Fi',
@@ -533,10 +453,8 @@ class _WifiScreenState extends State<WifiScreen> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-
           children: [
             const Icon(Icons.wifi_off, size: 60, color: Colors.red),
 
@@ -545,7 +463,6 @@ class _WifiScreenState extends State<WifiScreen> {
             const Text(
               'Unable to load Wi-Fi networks',
               textAlign: TextAlign.center,
-
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
 
@@ -557,9 +474,7 @@ class _WifiScreenState extends State<WifiScreen> {
 
             ElevatedButton.icon(
               onPressed: _scanNetworks,
-
               icon: const Icon(Icons.refresh),
-
               label: const Text('Try Again'),
             ),
           ],
@@ -574,10 +489,8 @@ class _WifiScreenState extends State<WifiScreen> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-
           children: [
             const Icon(Icons.wifi_find, size: 60),
 
@@ -586,7 +499,6 @@ class _WifiScreenState extends State<WifiScreen> {
             const Text(
               'No Wi-Fi networks found.',
               textAlign: TextAlign.center,
-
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
 

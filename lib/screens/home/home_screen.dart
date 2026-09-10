@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../app/app.dart';
 import '../../app/routes.dart';
 import '../../states/device_provider.dart';
 import '../dashboard/dashboard_screen.dart';
@@ -24,6 +25,20 @@ class _HomeScreenState extends State<HomeScreen> {
     WifiScreen(),
     SettingsScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedTab();
+  }
+
+  Future<void> _loadSavedTab() async {
+    final savedIndex = await ESP32ControllerApp.getLastHomeTabIndex();
+    if (!mounted) return;
+    setState(() {
+      _selectedIndex = savedIndex.clamp(0, _screens.length - 1);
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -81,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
           label: 'CONNECT AGAIN',
           textColor: Colors.white,
           onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.bleScan);
+            AppRoutes.clearAndNavigateToBleScan(context);
           },
         ),
       ),
@@ -108,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() {
               _selectedIndex = index;
             });
+            ESP32ControllerApp.saveLastHomeTabIndex(index);
           },
           destinations: const [
             NavigationDestination(
